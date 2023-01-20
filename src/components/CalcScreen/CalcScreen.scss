@@ -1,0 +1,27 @@
+.screenForm{
+    width: 80%;
+    height: 7rem;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 3rem;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 2rem;
+    
+    &.darkgray {
+    background-color: #2e323a;;
+    }   
+}
+
+
+
+.green {
+    color: green;
+    &.fontType{
+    font-weight: 800;
+    font-size: 2.5rem;
+}
+}
+

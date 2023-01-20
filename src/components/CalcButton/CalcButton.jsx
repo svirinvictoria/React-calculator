@@ -1,15 +1,15 @@
 import React, { useState } from "react";
-import "./CalcButton.css";
+import "./CalcButton.scss";
 
 const CalcButton = (props) => {
-  const [currentClass, setCurrentClass] = useState(props.standardClass);
+  const [currentClass, setCurrentClass] = useState(props.standardColor);
 
   const mouseEnterHandler = () => {
-    setCurrentClass(props.alternativeClass);
+    setCurrentClass(props.alternativeColor);
   };
 
   const mouseLeaveHandler = () => {
-    setCurrentClass(props.standardClass);
+    setCurrentClass(props.standardColor);
   };
 
   return (
@@ -17,8 +17,9 @@ const CalcButton = (props) => {
       className="btn-body"
       onMouseEnter={mouseEnterHandler}
       onMouseLeave={mouseLeaveHandler}
+      onClick={props.onButtonClick}
     >
-      <div className="caption"> XXX</div>
+      <div className="caption"> {props.caption}</div>
       <div className={currentClass + " btn-stripe"}></div>
     </button>
   );
