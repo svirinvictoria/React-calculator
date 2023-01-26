@@ -1,92 +1,167 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import CalcButton from "../CalcButton/CalcButton";
 import CalcScreen from "../CalcScreen/CalcScreen";
 
 import "./Calculator.scss";
 
 const Calculator = () => {
+  const errorMessage = "ERROR";
+  const [expression, setExpression] = useState("");
+  const [shouldBeCleaned, setShouldBeCleaned] = useState(false);
 
-  // const [isPlus, setIsPlus]=useState(false);
-  // const [isMinus, setIsMinus]= useState(false);
-  // const [isMulti, setIsMulti] = useState(false);
-  // const [isDivided, setIsDivided] = useState(false);
-  // const [isEqual, setIsEqual] = useState(false);
+  const buttonClickHandler = (val) => {
+    if (shouldBeCleaned === true) {
+      setExpression(val);
+      setShouldBeCleaned(false);
+    } else {
+      const temp = expression + val;
+      setExpression(temp);
+    }
+  };
 
-  // const plusSign = (a, b)=>{
-  //     setIsPlus(true);
-  //     // if(isPlus===true && isEqual===true) {
-  //     //     return (a+b)
-  //     // }
-  // }
+  //validating results
+  const validateExpression = () => {
+    if (isExpressionEmpty(expression)) {
+      return false;
+    }
 
-  // const minusSign = (a,b) => {
-  //     setIsMinus(true);
-  //     // if(isMinus===true && isEqual===true) {
-  //     // return (a-b)
-  //     // }
-  // }
+    if (checkSignAmount(expression) !== 1) {
+      return false;
+    }
+    // debugger;
+    if (!hasEnoughMembers(expression)) {
+      return false;
+    }
+    return true;
+  };
 
-  // const multiplicationSign = (a, b) => {
-  //     setIsMulti(true);
-  //     // if (isMulti === true && isEqual === true) {
-  //     //   return a * b;
-  //     // }
-  // }
+  const isExpressionEmpty = () => {
+    return !expression || expression === "";
+  };
 
-  // const divisionSign = (a, b) => {
-  //     setIsDivided(true);
-  // //     if (b!==0) {
-  // //         return a/b
-  // //     } else {
-  // //         return -1}
-  // // }
+  const countCharakter = (exp, sign) => {
+    let counter = 0;
+    if (exp.includes(sign)) {
+      for (let i = 0; i < exp.length; i++) {
+        if (exp[i] === sign) {
+          counter++;
+        }
+      }
+    }
+    return counter;
+  };
 
-  // const cleanScreen =()=>{
+  function checkSignAmount(exp) {
+    return (
+      countCharakter(exp, "-") +
+      countCharakter(exp, "+") +
+      countCharakter(exp, "*") +
+      countCharakter(exp, "/")
+    );
+  }
 
-  // }
-// debugger;
-  
-  const [isPushed, setIsPushed] = useState(false);
-  const [myNumber, setMyNumber] =useState('');
+  const checkExpressionSign = (exp) => {
+    // debugger;
+    if (exp.includes("+")) {
+      return "+";
+    } else if (exp.includes("-")) {
+      return "-";
+    } else if (exp.includes("*")) {
+      return "*";
+    } else if (exp.includes("/")) {
+      return "/";
+    }
+    return undefined;
+  };
 
-   const numberClickHandler = (val) => {
-     setIsPushed(true);
-     console.log(isPushed); 
-      // alert(val);
-      setMyNumber(val);
-      
+  const hasEnoughMembers = (exp) => {
+  //debugger
+    let sign = checkExpressionSign(exp);
+    const splittedExpression = exp.split(sign);
+    return (
+      splittedExpression.length === 2 &&
+      splittedExpression[0] !== "" &&
+      splittedExpression[1] !== ""
+    );
+  };
 
-     
-   };
-console.log(myNumber);
- 
+  //Counting
+  //debugger;
+  const resultClickHandler = () => {
+    if (!validateExpression()) {
+      setExpression(errorMessage);
+      setShouldBeCleaned(true);
+      return;
+    }
+
+    if (expression.includes("+")) {
+      const numbers = expression.split("+");
+      const sum = +numbers[0] + +numbers[1];
+      const result = expression + "=" + sum;
+
+      setExpression(result);
+      // console.log(result);
+      setShouldBeCleaned(true);
+      return;
+    } else if (expression.includes("-")) {
+      const numbers = expression.split("-");
+      const difference = +numbers[0] - +numbers[1];
+      const result = expression + "=" + difference;
+      setShouldBeCleaned(true);
+      setExpression(result);
+    } else if (expression.includes("*")) {
+      const numbers = expression.split("*");
+      const product = +numbers[0] * +numbers[1];
+      const result = expression + "=" + product;
+      setShouldBeCleaned(true);
+      setExpression(result);
+    } else if (expression.includes("/")) {
+      const numbers = expression.split("/");
+      const quotient = +numbers[0] / +numbers[1];
+
+      if (+numbers[1] === 0) {
+        setExpression(errorMessage);
+        setShouldBeCleaned(true);
+      } else {
+        const result = expression + "=" + quotient;
+        setShouldBeCleaned(true);
+        setExpression(result);
+      }
+    }
+  };
+
+  const clearClickHandler = () => {
+    setExpression("");
+  };
+
   return (
     <div className="calcBody">
-      <CalcScreen backColor="darkgray" foreColor="green" value={myNumber} />
+      <CalcScreen backColor="darkgray" foreColor="green" value={expression} />
+
       <div className="row-form">
         {/* first row */}
         <CalcButton
           standardColor="lightgray"
           alternativeColor="aqua"
-          onButtonClick={(val) => numberClickHandler("1")}
+          onButtonClick={() => buttonClickHandler("1")}
           caption="1"
         />
         <CalcButton
           standardColor="lightgray"
           alternativeColor="aqua"
-          onButtonClick={(val) => numberClickHandler("2")}
+          onButtonClick={() => buttonClickHandler("2")}
           caption="2"
         />
         <CalcButton
           standardColor="lightgray"
           alternativeColor="aqua"
-          onButtonClick={(val) => numberClickHandler("3")}
+          onButtonClick={() => buttonClickHandler("3")}
           caption="3"
         />
         <CalcButton
           standardColor="lightgray"
           alternativeColor="green"
-          onButtonClick={(val) => numberClickHandler("/")}
+          onButtonClick={() => buttonClickHandler("/")}
           caption="/"
         />
       </div>
@@ -95,25 +170,25 @@ console.log(myNumber);
         <CalcButton
           standardColor="lightgray"
           alternativeColor="aqua"
-          onButtonClick={(val) => numberClickHandler("4")}
+          onButtonClick={() => buttonClickHandler("4")}
           caption="4"
         />
         <CalcButton
           standardColor="lightgray"
           alternativeColor="aqua"
-          onButtonClick={(val) => numberClickHandler("5")}
+          onButtonClick={() => buttonClickHandler("5")}
           caption="5"
         />
         <CalcButton
           standardColor="lightgray"
           alternativeColor="aqua"
-          onButtonClick={(val) => numberClickHandler("6")}
+          onButtonClick={() => buttonClickHandler("6")}
           caption="6"
         />
         <CalcButton
           standardColor="lightgray"
           alternativeColor="green"
-          onButtonClick={(val) => numberClickHandler("*")}
+          onButtonClick={() => buttonClickHandler("*")}
           caption="*"
         />
       </div>
@@ -122,25 +197,25 @@ console.log(myNumber);
         <CalcButton
           standardColor="lightgray"
           alternativeColor="aqua"
-          onButtonClick={(val) => numberClickHandler("7")}
+          onButtonClick={() => buttonClickHandler("7")}
           caption="7"
         />
         <CalcButton
           standardColor="lightgray"
           alternativeColor="aqua"
-          onButtonClick={(val) => numberClickHandler("8")}
+          onButtonClick={() => buttonClickHandler("8")}
           caption="8"
         />
         <CalcButton
           standardColor="lightgray"
           alternativeColor="aqua"
-          onButtonClick={(val) => numberClickHandler("9")}
+          onButtonClick={() => buttonClickHandler("9")}
           caption="9"
         />
         <CalcButton
           standardColor="lightgray"
           alternativeColor="green"
-          onButtonClick={(val) => numberClickHandler("-")}
+          onButtonClick={() => buttonClickHandler("-")}
           caption="-"
         />
       </div>
@@ -149,25 +224,25 @@ console.log(myNumber);
         <CalcButton
           standardColor="lightgray"
           alternativeColor="orange"
-          onButtonClick={(val) => numberClickHandler("")}
+          onButtonClick={() => clearClickHandler("")}
           caption="C"
         />
         <CalcButton
           standardColor="lightgray"
           alternativeColor="aqua"
-          onButtonClick={(val) => numberClickHandler("0")}
+          onButtonClick={() => buttonClickHandler("0")}
           caption="0"
         />
         <CalcButton
           standardColor="lightgray"
           alternativeColor="orange"
-          onButtonClick={(val) => numberClickHandler("=")}
+          onButtonClick={() => resultClickHandler()}
           caption="="
         />
         <CalcButton
           standardColor="lightgray"
           alternativeColor="green"
-          onButtonClick={(val) => numberClickHandler("+")}
+          onButtonClick={() => buttonClickHandler("+")}
           caption="+"
         />
       </div>
